@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Regex Cheatsheet and Playground</title>
+<meta name="description" content="An interactive JavaScript regex cheatsheet, a live tester with match highlighting, and a library of common tested patterns. Runs entirely in your browser.">
+<link rel="canonical" href="https://0xelitesystem.github.io/regex-cheatsheet-playground/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Regex Cheatsheet and Playground">
+<meta property="og:description" content="An interactive JavaScript regex cheatsheet, a live tester with match highlighting, and a library of common tested patterns.">
+<meta property="og:url" content="https://0xelitesystem.github.io/regex-cheatsheet-playground/">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Regex Cheatsheet and Playground",
+  "description": "An interactive JavaScript regex cheatsheet, a live tester with match highlighting, and a library of common tested patterns.",
+  "url": "https://0xelitesystem.github.io/regex-cheatsheet-playground/",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Any (browser)",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "0xelitesystem",
+    "url": "https://elitesystem.ai"
+  }
+}
+</script>
+<style>
+:root {
+  --bg: #fafaf6;
+  --surface: #ffffff;
+  --ink: #0a1d1e;
+  --ink-soft: #2c4a4c;
+  --rule: #c8d4d3;
+  --teal: #0f5c60;
+  --teal-deep: #0a4548;
+  --gold: #b07d2a;
+  --gold-deep: #8a611f;
+  --ok: #1a5c2e;
+  --err: #8b1a1a;
+  --code-bg: #f0ebe1;
+  --hl: rgba(176, 125, 42, 0.30);
+  --hl-alt: rgba(38, 96, 168, 0.28);
+}
+[data-theme="dark"] {
+  --bg: #0c1c1d;
+  --surface: #14292a;
+  --ink: #e8ebe6;
+  --ink-soft: #b0c0bd;
+  --rule: #2a4042;
+  --teal: #4ab4ba;
+  --teal-deep: #6dc8ce;
+  --gold: #d4a155;
+  --gold-deep: #e6b876;
+  --ok: #6dd380;
+  --err: #e88080;
+  --code-bg: #0a1718;
+  --hl: rgba(212, 161, 85, 0.38);
+  --hl-alt: rgba(109, 168, 224, 0.34);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 2rem 1rem;
+  line-height: 1.55;
+}
+.wrap { max-width: 1150px; margin: 0 auto; }
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 2px solid var(--teal);
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+h1 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--teal);
+}
+.tag {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.75rem;
+  color: var(--gold-deep);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+[data-theme="dark"] .tag { color: var(--gold); }
+.theme-btn {
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--ink-soft);
+  padding: 0.4rem 0.85rem;
+  font-size: 0.8rem;
+  font-family: inherit;
+  cursor: pointer;
+  border-radius: 2px;
+}
+.theme-btn:hover { border-color: var(--teal); color: var(--teal); }
+.lede {
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+  margin-bottom: 1.75rem;
+  max-width: 74ch;
+}
+.note {
+  font-size: 0.85rem;
+  color: var(--gold-deep);
+  background: var(--code-bg);
+  border-left: 3px solid var(--gold);
+  padding: 0.65rem 0.85rem;
+  border-radius: 2px;
+  margin-bottom: 1.75rem;
+  max-width: 82ch;
+}
+[data-theme="dark"] .note { color: var(--gold); }
+.section {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  border-radius: 3px;
+}
+.section h2 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--teal);
+  margin-bottom: 1rem;
+  letter-spacing: 0.02em;
+}
+label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  display: block;
+  margin-bottom: 0.4rem;
+}
+.pattern-row { display: grid; grid-template-columns: 1fr auto; gap: 0.75rem; align-items: end; }
+@media (max-width: 640px) { .pattern-row { grid-template-columns: 1fr; } }
+input[type="text"], textarea {
+  width: 100%;
+  background: var(--code-bg);
+  border: 1px solid var(--rule);
+  color: var(--ink);
+  padding: 0.6rem 0.7rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.9rem;
+  border-radius: 2px;
+}
+input:focus, textarea:focus { outline: 2px solid var(--teal); outline-offset: 1px; }
+.slashes { display: flex; align-items: center; gap: 0; }
+.slashes .slash { font-family: ui-monospace, monospace; font-size: 1.1rem; color: var(--ink-soft); padding: 0 0.3rem; }
+.flags-box { display: flex; flex-wrap: wrap; gap: 0.5rem 0.9rem; margin-top: 0.85rem; }
+.flag-chk { display: flex; align-items: center; gap: 0.35rem; font-size: 0.8rem; font-family: ui-monospace, monospace; color: var(--ink-soft); }
+.flag-chk input { width: auto; }
+textarea#test-text { min-height: 130px; resize: vertical; margin-top: 0.4rem; }
+.status { margin-top: 0.85rem; font-size: 0.85rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
+.pill {
+  font-family: ui-monospace, monospace;
+  font-size: 0.78rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 2px;
+  background: var(--code-bg);
+  border: 1px solid var(--rule);
+}
+.pill.ok { color: var(--ok); border-color: var(--ok); }
+.pill.err { color: var(--err); border-color: var(--err); }
+.highlight-out {
+  margin-top: 1rem;
+  background: var(--code-bg);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: 0.85rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.9rem;
+  line-height: 1.75;
+  white-space: pre-wrap;
+  word-break: break-word;
+  min-height: 3rem;
+}
+mark.m { background: var(--hl); color: inherit; border-radius: 2px; padding: 0.05rem 0; }
+mark.m.alt { background: var(--hl-alt); }
+.error-msg {
+  color: var(--err);
+  font-size: 0.85rem;
+  padding: 0.6rem;
+  background: var(--code-bg);
+  border-left: 3px solid var(--err);
+  border-radius: 2px;
+  margin-top: 0.85rem;
+}
+.groups { margin-top: 1rem; font-size: 0.82rem; }
+.groups table { border-collapse: collapse; width: 100%; }
+.groups th, .groups td {
+  text-align: left;
+  padding: 0.35rem 0.6rem;
+  border-bottom: 1px solid var(--rule);
+  font-family: ui-monospace, monospace;
+  font-size: 0.78rem;
+  vertical-align: top;
+}
+.groups th { color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.68rem; }
+.cheat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+@media (max-width: 760px) { .cheat-grid { grid-template-columns: 1fr; } }
+.cheat-group h3 { font-size: 0.8rem; color: var(--gold-deep); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+[data-theme="dark"] .cheat-group h3 { color: var(--gold); }
+.cheat-table { border-collapse: collapse; width: 100%; margin-bottom: 1rem; }
+.cheat-table td { padding: 0.3rem 0.5rem; border-bottom: 1px solid var(--rule); vertical-align: top; font-size: 0.83rem; }
+.cheat-table td.tok {
+  font-family: ui-monospace, monospace;
+  color: var(--teal);
+  white-space: nowrap;
+  width: 6rem;
+  font-size: 0.82rem;
+}
+.lib-grid { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.lib-btn {
+  font-family: inherit;
+  font-size: 0.82rem;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--rule);
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  border-radius: 2px;
+}
+.lib-btn:hover { border-color: var(--teal); color: var(--teal); }
+.lib-desc { font-size: 0.82rem; color: var(--ink-soft); margin-top: 0.75rem; min-height: 1.2rem; }
+button.primary {
+  font-family: inherit;
+  font-size: 0.85rem;
+  padding: 0.6rem 1.1rem;
+  border: 1px solid var(--teal);
+  background: var(--teal);
+  color: var(--surface);
+  cursor: pointer;
+  border-radius: 2px;
+  font-weight: 600;
+}
+[data-theme="dark"] button.primary { color: var(--bg) !important; }
+button.primary:hover { background: var(--teal-deep); border-color: var(--teal-deep); }
+footer {
+  margin-top: 3rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--rule);
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+}
+footer a { color: var(--teal); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+.privacy-note { font-size: 0.78rem; color: var(--gold-deep); margin-top: 0.75rem; }
+[data-theme="dark"] .privacy-note { color: var(--gold); }
+@media (max-width: 640px) {
+  body { padding: 1rem 0.75rem; }
+  h1 { font-size: 1.4rem; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div>
+    <h1>Regex Cheatsheet and Playground</h1>
+    <div class="tag">Cheatsheet, live tester, tested patterns</div>
+  </div>
+  <button class="theme-btn" id="theme-toggle" type="button">Dark</button>
+</header>
+
+<p class="lede">A quick regex cheatsheet, a live tester that highlights matches as you type, and a small library of common patterns you can load with one click. Everything runs in your browser.</p>
+
+<div class="note">This uses the <strong>JavaScript / ECMAScript</strong> regex flavor (the same engine your browser runs). Other flavors (PCRE, Python <code>re</code>, Go, .NET) differ in lookbehind support, named-group syntax, and some escapes. Patterns tested here will not always behave identically elsewhere.</div>
+
+<div class="section">
+  <h2>Live tester</h2>
+  <div class="pattern-row">
+    <div>
+      <label for="pattern">Pattern</label>
+      <div class="slashes">
+        <span class="slash">/</span>
+        <input type="text" id="pattern" value="\b\w+\b" spellcheck="false" autocapitalize="off" autocorrect="off" placeholder="your pattern">
+        <span class="slash">/</span>
+      </div>
+    </div>
+    <div>
+      <label for="flags-view">Flags</label>
+      <input type="text" id="flags-view" readonly value="g" style="width:6rem;">
+    </div>
+  </div>
+  <div class="flags-box">
+    <span class="flag-chk"><input type="checkbox" id="flag-g" checked><label for="flag-g" style="margin:0;text-transform:none;letter-spacing:0;">g global</label></span>
+    <span class="flag-chk"><input type="checkbox" id="flag-i"><label for="flag-i" style="margin:0;text-transform:none;letter-spacing:0;">i ignore case</label></span>
+    <span class="flag-chk"><input type="checkbox" id="flag-m"><label for="flag-m" style="margin:0;text-transform:none;letter-spacing:0;">m multiline</label></span>
+    <span class="flag-chk"><input type="checkbox" id="flag-s"><label for="flag-s" style="margin:0;text-transform:none;letter-spacing:0;">s dotall</label></span>
+    <span class="flag-chk"><input type="checkbox" id="flag-u"><label for="flag-u" style="margin:0;text-transform:none;letter-spacing:0;">u unicode</label></span>
+    <span class="flag-chk"><input type="checkbox" id="flag-y"><label for="flag-y" style="margin:0;text-transform:none;letter-spacing:0;">y sticky</label></span>
+  </div>
+
+  <div style="margin-top:1rem;">
+    <label for="test-text">Test text</label>
+    <textarea id="test-text" spellcheck="false" placeholder="Type or paste text to match against.">The quick brown fox jumps over the lazy dog. Contact: dev@example.com on 2026-07-11.</textarea>
+  </div>
+
+  <div class="status" id="status"></div>
+  <div id="error-slot"></div>
+  <div class="highlight-out" id="highlight-out"></div>
+  <div class="groups" id="groups"></div>
+</div>
+
+<div class="section">
+  <h2>Common tested patterns</h2>
+  <div class="lib-grid" id="lib-grid"></div>
+  <div class="lib-desc" id="lib-desc">Click a pattern to load it into the tester above.</div>
+</div>
+
+<div class="section">
+  <h2>Cheatsheet</h2>
+  <div class="cheat-grid" id="cheat-grid"></div>
+</div>
+
+<footer>
+  <div>Regex Cheatsheet and Playground. Open source, MIT licensed. <a href="https://github.com/0xelitesystem/regex-cheatsheet-playground" target="_blank" rel="noopener">View source</a>.</div>
+  <div>JavaScript / ECMAScript flavor.</div>
+</footer>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+
+// Theme toggle
+const themeBtn = $("theme-toggle");
+function setTheme(t) {
+  document.documentElement.setAttribute("data-theme", t);
+  themeBtn.textContent = t === "dark" ? "Light" : "Dark";
+}
+themeBtn.addEventListener("click", () => {
+  const cur = document.documentElement.getAttribute("data-theme") || "light";
+  setTheme(cur === "dark" ? "light" : "dark");
+});
+setTheme(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+
+function escapeHtml(s) {
+  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+// ---- Flags ----
+const FLAG_IDS = { g: "flag-g", i: "flag-i", m: "flag-m", s: "flag-s", u: "flag-u", y: "flag-y" };
+function currentFlags() {
+  let f = "";
+  for (const [flag, id] of Object.entries(FLAG_IDS)) {
+    if ($(id).checked) f += flag;
+  }
+  return f;
+}
+
+// ---- Core matching ----
+function run() {
+  $("error-slot").innerHTML = "";
+  $("groups").innerHTML = "";
+  const patternStr = $("pattern").value;
+  const flags = currentFlags();
+  $("flags-view").value = flags || "(none)";
+  const text = $("test-text").value;
+
+  if (patternStr === "") {
+    $("status").innerHTML = `<span class="pill">Enter a pattern</span>`;
+    $("highlight-out").innerHTML = escapeHtml(text);
+    return;
+  }
+
+  let re;
+  try {
+    re = new RegExp(patternStr, flags);
+  } catch (e) {
+    $("status").innerHTML = `<span class="pill err">invalid pattern</span>`;
+    $("error-slot").innerHTML = `<div class="error-msg">${escapeHtml(e.message)}</div>`;
+    $("highlight-out").innerHTML = escapeHtml(text);
+    return;
+  }
+
+  // Collect matches. Guard against zero-length-match infinite loops by
+  // manually advancing lastIndex whenever a match has length 0.
+  const matches = [];
+  const global = re.global || re.sticky;
+  const MAX_MATCHES = 100000;
+
+  try {
+    if (global) {
+      re.lastIndex = 0;
+      let m;
+      let iterations = 0;
+      while ((m = re.exec(text)) !== null) {
+        matches.push({ index: m.index, text: m[0], groups: m.slice(1), named: m.groups || null });
+        if (m[0].length === 0) {
+          re.lastIndex++; // avoid infinite loop on empty match
+        }
+        iterations++;
+        if (iterations > MAX_MATCHES) break;
+        if (re.lastIndex > text.length) break;
+      }
+    } else {
+      const m = re.exec(text);
+      if (m) matches.push({ index: m.index, text: m[0], groups: m.slice(1), named: m.groups || null });
+    }
+  } catch (e) {
+    $("status").innerHTML = `<span class="pill err">runtime error</span>`;
+    $("error-slot").innerHTML = `<div class="error-msg">${escapeHtml(e.message)}</div>`;
+    $("highlight-out").innerHTML = escapeHtml(text);
+    return;
+  }
+
+  // Status
+  if (matches.length === 0) {
+    $("status").innerHTML = `<span class="pill">0 matches</span>`;
+  } else {
+    $("status").innerHTML = `<span class="pill ok">${matches.length} match${matches.length === 1 ? "" : "es"}</span>`;
+  }
+
+  // Build highlighted output. Non-global matches highlight the single match.
+  renderHighlights(text, matches);
+  renderGroups(matches);
+}
+
+function renderHighlights(text, matches) {
+  const out = $("highlight-out");
+  if (matches.length === 0) {
+    out.innerHTML = escapeHtml(text) || '<span style="color:var(--ink-soft);font-style:italic;">(no text)</span>';
+    return;
+  }
+  // matches are already in order (exec advances left to right).
+  let html = "";
+  let cursor = 0;
+  let alt = false;
+  for (const m of matches) {
+    if (m.index < cursor) continue; // safety: skip any overlap
+    html += escapeHtml(text.slice(cursor, m.index));
+    const cls = "m" + (alt ? " alt" : "");
+    if (m.text.length === 0) {
+      // zero-length match marker
+      html += `<mark class="${cls}" title="zero-length match" style="padding:0 1px;">&#8203;</mark>`;
+    } else {
+      html += `<mark class="${cls}">${escapeHtml(m.text)}</mark>`;
+    }
+    cursor = m.index + m.text.length;
+    alt = !alt;
+  }
+  html += escapeHtml(text.slice(cursor));
+  out.innerHTML = html;
+}
+
+function renderGroups(matches) {
+  const box = $("groups");
+  // Show capture groups for the first few matches only, to keep it readable.
+  const withGroups = matches.filter(m => m.groups.length > 0 || (m.named && Object.keys(m.named).length));
+  if (withGroups.length === 0) { box.innerHTML = ""; return; }
+
+  const shown = withGroups.slice(0, 20);
+  let rows = "";
+  shown.forEach((m, i) => {
+    m.groups.forEach((g, gi) => {
+      rows += `<tr><td>match ${matches.indexOf(m) + 1}</td><td>group ${gi + 1}</td><td>${g === undefined ? '<span style="color:var(--ink-soft);">(unmatched)</span>' : escapeHtml(g)}</td></tr>`;
+    });
+    if (m.named) {
+      for (const [k, v] of Object.entries(m.named)) {
+        rows += `<tr><td>match ${matches.indexOf(m) + 1}</td><td>&lt;${escapeHtml(k)}&gt;</td><td>${v === undefined ? '<span style="color:var(--ink-soft);">(unmatched)</span>' : escapeHtml(v)}</td></tr>`;
+      }
+    }
+  });
+  box.innerHTML = `<table><thead><tr><th>Match</th><th>Group</th><th>Value</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+// ---- Library of tested patterns ----
+const LIBRARY = [
+  {
+    name: "Email",
+    pattern: "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}",
+    flags: "g",
+    desc: "Pragmatic email matcher. Not fully RFC 5322 compliant (no address can be by a simple regex), but good enough for typical validation.",
+    sample: "Reach us at dev@example.com or sales.team@sub.example.co.uk, not at not-an-email@."
+  },
+  {
+    name: "URL (http/https)",
+    pattern: "https?:\\/\\/[^\\s/$.?#].[^\\s]*",
+    flags: "gi",
+    desc: "Matches http and https URLs up to the next whitespace. Deliberately loose so it handles query strings and fragments.",
+    sample: "Visit https://example.com/tools?ref=1#top and http://example.org for details."
+  },
+  {
+    name: "IPv4 address",
+    pattern: "\\b(?:(?:25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.){3}(?:25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\b",
+    flags: "g",
+    desc: "Validates each octet is 0 to 255, so 999.1.1.1 will not match. Does not validate CIDR ranges.",
+    sample: "Valid: 192.168.0.1 and 8.8.8.8. Invalid: 256.1.1.1 and 10.0.0.999."
+  },
+  {
+    name: "Date (YYYY-MM-DD)",
+    pattern: "\\b\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\\d|3[01])\\b",
+    flags: "g",
+    desc: "ISO-style date. Checks month 01 to 12 and day 01 to 31, but does not check that the day is valid for that month.",
+    sample: "Shipped 2026-07-11, due 2026-13-40 is rejected, launch was 2025-01-05."
+  },
+  {
+    name: "Slug",
+    pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+    flags: "",
+    desc: "URL slug: lowercase letters and digits, single hyphens between words, no leading or trailing hyphen. Uses ^ and $ so test one slug at a time.",
+    sample: "my-first-post"
+  }
+];
+
+function buildLibrary() {
+  const grid = $("lib-grid");
+  grid.innerHTML = "";
+  LIBRARY.forEach((item, i) => {
+    const b = document.createElement("button");
+    b.className = "lib-btn";
+    b.type = "button";
+    b.textContent = item.name;
+    b.addEventListener("click", () => loadLibrary(i));
+    grid.appendChild(b);
+  });
+}
+
+function loadLibrary(i) {
+  const item = LIBRARY[i];
+  $("pattern").value = item.pattern;
+  // Set flags
+  for (const [flag, id] of Object.entries(FLAG_IDS)) {
+    $(id).checked = item.flags.includes(flag);
+  }
+  $("test-text").value = item.sample;
+  $("lib-desc").textContent = item.desc;
+  run();
+}
+
+// ---- Cheatsheet data ----
+const CHEAT = [
+  { group: "Character classes", rows: [
+    [".", "any char except newline (unless s flag)"],
+    ["\\d", "digit, 0 to 9"],
+    ["\\D", "non-digit"],
+    ["\\w", "word char: letter, digit, or underscore"],
+    ["\\W", "non-word char"],
+    ["\\s", "whitespace"],
+    ["\\S", "non-whitespace"],
+    ["[abc]", "any of a, b, or c"],
+    ["[^abc]", "anything except a, b, c"],
+    ["[a-z]", "range a to z"]
+  ]},
+  { group: "Anchors and boundaries", rows: [
+    ["^", "start of string (or line with m)"],
+    ["$", "end of string (or line with m)"],
+    ["\\b", "word boundary"],
+    ["\\B", "not a word boundary"]
+  ]},
+  { group: "Quantifiers", rows: [
+    ["*", "0 or more"],
+    ["+", "1 or more"],
+    ["?", "0 or 1 (optional)"],
+    ["{n}", "exactly n"],
+    ["{n,}", "n or more"],
+    ["{n,m}", "between n and m"],
+    ["*?", "lazy: as few as possible"]
+  ]},
+  { group: "Groups and alternation", rows: [
+    ["(abc)", "capturing group"],
+    ["(?:abc)", "non-capturing group"],
+    ["(?<name>abc)", "named capturing group"],
+    ["a|b", "a or b"],
+    ["\\1", "backreference to group 1"]
+  ]},
+  { group: "Lookaround", rows: [
+    ["(?=abc)", "lookahead: followed by abc"],
+    ["(?!abc)", "negative lookahead"],
+    ["(?<=abc)", "lookbehind: preceded by abc"],
+    ["(?<!abc)", "negative lookbehind"]
+  ]},
+  { group: "Escapes and flags", rows: [
+    ["\\.", "literal dot"],
+    ["\\\\", "literal backslash"],
+    ["\\n \\t", "newline, tab"],
+    ["g", "flag: find all matches"],
+    ["i", "flag: case insensitive"],
+    ["m", "flag: ^ and $ match line ends"],
+    ["s", "flag: . matches newline"],
+    ["u", "flag: full unicode"]
+  ]}
+];
+
+function buildCheat() {
+  const grid = $("cheat-grid");
+  grid.innerHTML = "";
+  for (const g of CHEAT) {
+    const wrap = document.createElement("div");
+    wrap.className = "cheat-group";
+    let rows = "";
+    for (const [tok, desc] of g.rows) {
+      rows += `<tr><td class="tok">${escapeHtml(tok)}</td><td>${escapeHtml(desc)}</td></tr>`;
+    }
+    wrap.innerHTML = `<h3>${escapeHtml(g.group)}</h3><table class="cheat-table"><tbody>${rows}</tbody></table>`;
+    grid.appendChild(wrap);
+  }
+}
+
+// Wire up live updates
+$("pattern").addEventListener("input", run);
+$("test-text").addEventListener("input", run);
+for (const id of Object.values(FLAG_IDS)) {
+  $(id).addEventListener("change", run);
+}
+
+buildLibrary();
+buildCheat();
+run();
+</script>
+</body>
+</html>
