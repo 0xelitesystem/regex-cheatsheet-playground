@@ -54,4 +54,4 @@ MIT.
 
 - [regex-tester](https://github.com/0xelitesystem/regex-tester), a focused regex tester
 - [regex-tester-with-explainer](https://github.com/0xelitesystem/regex-tester-with-explainer), test and explain a pattern token by token
-- [gradient-generator](https://github.com/0xelitesystem/gradient-generator), build CSS gradients visually
+- [css-gradient-composer](https://github.com/0xelitesystem/css-gradient-composer), build CSS gradients visually
